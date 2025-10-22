@@ -45,13 +45,33 @@ export const guessFrame = (timeRange: string): FrameType => {
   if (customTimeRangeDecode(timeRange).matchedFlag) {
     return 'Custom';
   }
+  // Проверяем, является ли это DateRange форматом (содержит DATEADD и DATETIME)
+  if (timeRange.includes('DATEADD') && timeRange.includes('DATETIME')) {
+    return 'DateRange';
+  }
   return 'Advanced';
 };
 
 export function useDefaultTimeFilter() {
-  return (
-    useSelector(
-      (state: JsonObject) => state?.common?.conf?.DEFAULT_TIME_FILTER,
-    ) ?? NO_TIME_RANGE
+  const configValue = useSelector(
+    (state: JsonObject) => state?.common?.conf?.DEFAULT_TIME_FILTER,
   );
+  
+  // Если конфигурационное значение не установлено, возвращаем дефолтное значение 30 дней
+  if (!configValue || configValue === NO_TIME_RANGE) {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 29); // 29 дней назад + сегодня = 30 дней
+    
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    
+    return `DATEADD(DATETIME('${formatDate(startDate)}'), 0, DAY) : DATEADD(DATETIME('${formatDate(endDate)}'), 0, DAY)`;
+  }
+  
+  return configValue;
 }

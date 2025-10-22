@@ -16,16 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import './daterangepicker.d';
 import { useEffect, useRef } from 'react';
-import { t } from '@superset-ui/core';
+import { t, styled } from '@superset-ui/core';
 import moment from 'moment';
-import 'daterangepicker';
-import 'daterangepicker/daterangepicker.css';
 import $ from 'jquery';
-import { styled } from '@superset-ui/core';
+
+// Импортируем daterangepicker после jQuery
+if (typeof window !== 'undefined') {
+  require('daterangepicker');
+  require('daterangepicker/daterangepicker.css');
+}
 
 const DateRangePickerWrapper = styled.div`
   width: 100%;
+  margin-top: 8px;
   
   input {
     width: 100%;
@@ -34,6 +39,7 @@ const DateRangePickerWrapper = styled.div`
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
+    background-color: ${({ theme }) => theme.colors.grayscale.light5};
     
     &:hover {
       border-color: ${({ theme }) => theme.colors.primary.base};
@@ -44,6 +50,10 @@ const DateRangePickerWrapper = styled.div`
       border-color: ${({ theme }) => theme.colors.primary.base};
       box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.primary.light3};
     }
+  }
+  
+  .daterangepicker {
+    z-index: 10000;
   }
 `;
 
@@ -57,11 +67,11 @@ export function DateRangePickerComponent(props: DateRangePickerProps) {
   const { onChange, value } = props;
 
   useEffect(() => {
-    if (!inputRef.current) return;
+    if (!inputRef.current || typeof window === 'undefined') return;
 
     const $input = $(inputRef.current);
     
-    // Определяем начальные даты
+    // Определяем начальные даты - 30 дней (29 дней назад + сегодня)
     const endDate = moment();
     const startDate = moment().subtract(29, 'days');
 
@@ -113,11 +123,11 @@ export function DateRangePickerComponent(props: DateRangePickerProps) {
           moment().subtract(1, 'month').endOf('month'),
         ],
         [t('This Quarter')]: [moment().startOf('quarter'), moment().endOf('quarter')],
+        [t('This Year')]: [moment().startOf('year'), moment().endOf('year')],
         [t('Last Year')]: [
           moment().subtract(1, 'year').startOf('year'),
           moment().subtract(1, 'year').endOf('year'),
         ],
-        [t('This Year')]: [moment().startOf('year'), moment().endOf('year')],
         [t('All Time')]: [moment('2000-01-01'), moment()],
       },
       alwaysShowCalendars: true,
@@ -147,6 +157,7 @@ export function DateRangePickerComponent(props: DateRangePickerProps) {
         type="text"
         name="daterange"
         placeholder={t('Select date range')}
+        readOnly
       />
     </DateRangePickerWrapper>
   );
