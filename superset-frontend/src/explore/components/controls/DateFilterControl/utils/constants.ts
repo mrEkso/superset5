@@ -36,6 +36,7 @@ import { CheckboxOptionType } from 'src/components/Radio';
 import { extendedDayjs } from 'src/utils/dates';
 
 export const FRAME_OPTIONS: SelectOptionType[] = [
+  { value: 'DateRange', label: t('Date Range') },
   { value: 'Common', label: t('Last') },
   { value: 'Calendar', label: t('Previous') },
   { value: 'Current', label: t('Current') },
@@ -50,6 +51,8 @@ export const COMMON_RANGE_OPTIONS: CheckboxOptionType[] = [
   { value: 'Last month', label: t('Last month') },
   { value: 'Last quarter', label: t('Last quarter') },
   { value: 'Last year', label: t('Last year') },
+  { value: 'Last 30 days', label: t('Last 30 days') },
+  { value: 'All time', label: t('All time') },
 ];
 export const COMMON_RANGE_VALUES_SET = new Set(
   COMMON_RANGE_OPTIONS.map(value => value.value),
@@ -117,6 +120,8 @@ export const COMMON_RANGE_SET: Set<CommonRangeType> = new Set([
   'Last month',
   'Last quarter',
   'Last year',
+  'Last 30 days',
+  'All time',
 ]);
 
 export const CALENDAR_RANGE_SET: Set<CalendarRangeType> = new Set([

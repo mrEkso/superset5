@@ -22,3 +22,5 @@ export { CurrentCalendarFrame } from './CurrentCalendarFrame';
 export { CustomFrame } from './CustomFrame';
 export { AdvancedFrame } from './AdvancedFrame';
 export { DateLabel } from './DateLabel';
+export { DateRangePickerComponent } from './DateRangePicker';
+export { DateRangeFrame } from './DateRangeFrame';

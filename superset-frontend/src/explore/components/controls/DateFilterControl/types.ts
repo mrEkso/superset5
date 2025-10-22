@@ -26,6 +26,7 @@ export type FrameType =
   | 'Calendar'
   | 'Current'
   | 'Custom'
+  | 'DateRange'
   | 'Advanced'
   | 'No filter';
 
@@ -76,7 +77,9 @@ export type CommonRangeType =
   | 'Last week'
   | 'Last month'
   | 'Last quarter'
-  | 'Last year';
+  | 'Last year'
+  | 'Last 30 days'
+  | 'All time';
 
 export const PreviousCalendarWeek = 'previous calendar week';
 export const PreviousCalendarMonth = 'previous calendar month';

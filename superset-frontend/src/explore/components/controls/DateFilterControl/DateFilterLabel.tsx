@@ -52,6 +52,7 @@ import {
   CustomFrame,
   AdvancedFrame,
   DateLabel,
+  DateRangeFrame,
 } from './components';
 import { CurrentCalendarFrame } from './components/CurrentCalendarFrame';
 
@@ -286,6 +287,9 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
         onChange={onChangeFrame}
       />
       {frame !== 'No filter' && <Divider />}
+      {frame === 'DateRange' && (
+        <DateRangeFrame value={timeRangeValue} onChange={setTimeRangeValue} />
+      )}
       {frame === 'Common' && (
         <CommonFrame value={timeRangeValue} onChange={setTimeRangeValue} />
       )}
