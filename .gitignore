@@ -125,3 +125,4 @@ docker/*local*
 test-report.html
 superset/static/stats/statistics.html
 .aider*
+superset/db_engine_specs/README.md
