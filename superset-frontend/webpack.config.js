@@ -156,7 +156,8 @@ if (!isDevMode) {
   );
 
   // Runs type checking on a separate process to speed up the build
-  plugins.push(new ForkTsCheckerWebpackPlugin());
+  // Disabled due to memory issues in production builds
+  // plugins.push(new ForkTsCheckerWebpackPlugin());
 }
 
 const PREAMBLE = [path.join(APP_DIR, '/src/preamble.ts')];

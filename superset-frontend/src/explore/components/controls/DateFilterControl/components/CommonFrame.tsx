@@ -29,7 +29,7 @@ import {
 } from 'src/explore/components/controls/DateFilterControl/types';
 
 export function CommonFrame(props: FrameComponentProps) {
-  let commonRange = 'Last week';
+  let commonRange = 'Last 30 days';
   if (COMMON_RANGE_SET.has(props.value as CommonRangeType)) {
     commonRange = props.value;
   } else {

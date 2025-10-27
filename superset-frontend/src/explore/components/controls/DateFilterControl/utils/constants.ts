@@ -45,6 +45,7 @@ export const FRAME_OPTIONS: SelectOptionType[] = [
 ];
 
 export const COMMON_RANGE_OPTIONS: CheckboxOptionType[] = [
+  { value: 'Last 30 days', label: t('Last 30 days') },
   { value: 'Last day', label: t('Last day') },
   { value: 'Last week', label: t('Last week') },
   { value: 'Last month', label: t('Last month') },
@@ -112,6 +113,7 @@ export const UNTIL_MODE_OPTIONS: SelectOptionType[] =
   SINCE_MODE_OPTIONS.slice();
 
 export const COMMON_RANGE_SET: Set<CommonRangeType> = new Set([
+  'Last 30 days',
   'Last day',
   'Last week',
   'Last month',
