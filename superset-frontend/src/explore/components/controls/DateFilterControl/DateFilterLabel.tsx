@@ -32,32 +32,22 @@ import ControlHeader from 'src/explore/components/ControlHeader';
 import Modal from 'src/components/Modal';
 import { Divider } from 'src/components/Divider';
 import Icons from 'src/components/Icons';
-import Select from 'src/components/Select/Select';
 import { Tooltip } from 'src/components/Tooltip';
 import { useDebouncedEffect } from 'src/explore/exploreUtils';
 import { SLOW_DEBOUNCE } from 'src/constants';
 import { noOp } from 'src/utils/common';
 import ControlPopover from '../ControlPopover/ControlPopover';
 
-import { DateFilterControlProps, FrameType } from './types';
+import { DateFilterControlProps } from './types';
 import {
   DateFilterTestKey,
-  FRAME_OPTIONS,
   guessFrame,
   useDefaultTimeFilter,
 } from './utils';
 import {
-  CalendarFrame,
-  CustomFrame,
-  AdvancedFrame,
   DateLabel,
   DateRangeFrame,
 } from './components';
-import { CurrentCalendarFrame } from './components/CurrentCalendarFrame';
-
-const StyledRangeType = styled(Select)`
-  width: 272px;
-`;
 
 const ContentStyleWrapper = styled.div`
   ${({ theme }) => css`
@@ -160,7 +150,6 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
 
   const [show, setShow] = useState<boolean>(false);
   const guessedFrame = useMemo(() => guessFrame(value), [value]);
-  const [frame, setFrame] = useState<FrameType>(guessedFrame);
   const [lastFetchedTimeRange, setLastFetchedTimeRange] = useState(value);
   const [timeRangeValue, setTimeRangeValue] = useState(value);
   const [validTimeRange, setValidTimeRange] = useState<boolean>(false);
@@ -249,14 +238,12 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
 
   function onOpen() {
     setTimeRangeValue(value);
-    setFrame(guessedFrame);
     setShow(true);
     onOpenPopover();
   }
 
   function onHide() {
     setTimeRangeValue(value);
-    setFrame(guessedFrame);
     setShow(false);
     onClosePopover();
   }
@@ -269,46 +256,10 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
     }
   };
 
-  function onChangeFrame(value: FrameType) {
-    if (value === NO_TIME_RANGE) {
-      setTimeRangeValue(NO_TIME_RANGE);
-    }
-    setFrame(value);
-  }
-
   const overlayContent = (
     <ContentStyleWrapper>
-      <div className="control-label">{t('RANGE TYPE')}</div>
-      <StyledRangeType
-        ariaLabel={t('RANGE TYPE')}
-        options={FRAME_OPTIONS}
-        value={frame}
-        onChange={onChangeFrame}
-      />
-      {frame !== 'No filter' && <Divider />}
-      {frame === 'Common' && (
-        <DateRangeFrame value={timeRangeValue} onChange={setTimeRangeValue} />
-      )}
-      {frame === 'Calendar' && (
-        <CalendarFrame value={timeRangeValue} onChange={setTimeRangeValue} />
-      )}
-      {frame === 'Current' && (
-        <CurrentCalendarFrame
-          value={timeRangeValue}
-          onChange={setTimeRangeValue}
-        />
-      )}
-      {frame === 'Advanced' && (
-        <AdvancedFrame value={timeRangeValue} onChange={setTimeRangeValue} />
-      )}
-      {frame === 'Custom' && (
-        <CustomFrame
-          value={timeRangeValue}
-          onChange={setTimeRangeValue}
-          isOverflowingFilterBar={isOverflowingFilterBar}
-        />
-      )}
-      {frame === 'No filter' && <div data-test={DateFilterTestKey.NoFilter} />}
+      {/* Always show DateRangeFrame calendar directly */}
+      <DateRangeFrame value={timeRangeValue} onChange={setTimeRangeValue} />
       <Divider />
       <div>
         <div className="section-title">{t('Actual time range')}</div>

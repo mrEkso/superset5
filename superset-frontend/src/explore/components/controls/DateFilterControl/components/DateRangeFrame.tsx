@@ -29,11 +29,12 @@ import Loading from 'src/components/Loading';
 
 export function DateRangeFrame(props: FrameComponentProps) {
   const locale = useLocale();
+  // Default: Last 30 days including yesterday (e.g., Sep 22 - Oct 21, 2025 for today Oct 27)
   const [startDate, setStartDate] = useState<Dayjs>(
-    extendedDayjs().subtract(29, 'days').startOf('day'),
+    extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day'),
   );
   const [endDate, setEndDate] = useState<Dayjs>(
-    extendedDayjs().endOf('day'),
+    extendedDayjs().subtract(1, 'day').endOf('day'),
   );
 
   // Parse the incoming value to set initial dates
@@ -57,10 +58,25 @@ export function DateRangeFrame(props: FrameComponentProps) {
       } catch (error) {
         // If parsing fails, use defaults (Last 30 days)
         console.error('Error parsing date range:', error);
-        setStartDate(extendedDayjs().subtract(29, 'days').startOf('day'));
-        setEndDate(extendedDayjs().endOf('day'));
+        const defaultStart = extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day');
+        const defaultEnd = extendedDayjs().subtract(1, 'day').endOf('day');
+        setStartDate(defaultStart);
+        setEndDate(defaultEnd);
       }
+    } else {
+      // If no value or "No filter", set default and notify parent
+      const defaultStart = extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day');
+      const defaultEnd = extendedDayjs().subtract(1, 'day').endOf('day');
+      setStartDate(defaultStart);
+      setEndDate(defaultEnd);
+      
+      // Automatically set the default value
+      const startStr = defaultStart.format(DAYJS_FORMAT);
+      const endStr = defaultEnd.format(DAYJS_FORMAT);
+      const value = `${startStr} : ${endStr}`;
+      props.onChange(value);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.value]);
 
   const handleChange = (dates: [Dayjs, Dayjs] | null) => {
@@ -83,12 +99,12 @@ export function DateRangeFrame(props: FrameComponentProps) {
 
   const ranges = {
     [t('Last 30 Days')]: [
-      extendedDayjs().subtract(29, 'days').startOf('day'),
-      extendedDayjs().endOf('day'),
+      extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day'),
+      extendedDayjs().subtract(1, 'day').endOf('day'),
     ] as [Dayjs, Dayjs],
     [t('Last 7 Days')]: [
-      extendedDayjs().subtract(6, 'days').startOf('day'),
-      extendedDayjs().endOf('day'),
+      extendedDayjs().subtract(1, 'day').subtract(6, 'days').startOf('day'),
+      extendedDayjs().subtract(1, 'day').endOf('day'),
     ] as [Dayjs, Dayjs],
     [t('Last Week')]: [
       extendedDayjs().subtract(1, 'week').startOf('week'),

@@ -36,7 +36,7 @@ import { CheckboxOptionType } from 'src/components/Radio';
 import { extendedDayjs } from 'src/utils/dates';
 
 export const FRAME_OPTIONS: SelectOptionType[] = [
-  { value: 'Common', label: t('Last') },
+  { value: 'Common', label: t('Date Range') },
   { value: 'Calendar', label: t('Previous') },
   { value: 'Current', label: t('Current') },
   { value: 'Custom', label: t('Custom') },

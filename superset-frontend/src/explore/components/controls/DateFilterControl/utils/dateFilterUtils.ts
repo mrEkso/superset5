@@ -42,6 +42,11 @@ export const guessFrame = (timeRange: string): FrameType => {
   if (timeRange === NO_TIME_RANGE) {
     return 'No filter';
   }
+  // Check if it's a date range format (YYYY-MM-DD... : YYYY-MM-DD...)
+  // This should be treated as Common (DateRangeFrame)
+  if (timeRange.includes(' : ') && /\d{4}-\d{2}-\d{2}/.test(timeRange)) {
+    return 'Common';
+  }
   if (customTimeRangeDecode(timeRange).matchedFlag) {
     return 'Custom';
   }
