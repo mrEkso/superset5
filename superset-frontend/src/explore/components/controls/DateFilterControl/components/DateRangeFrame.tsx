@@ -38,6 +38,12 @@ export function DateRangeFrame(props: FrameComponentProps) {
   const [endDate, setEndDate] = useState<Dayjs>(
     extendedDayjs().subtract(1, 'day').endOf('day'),
   );
+  
+  // Initial picker value - only set once for first render
+  const [initialPickerValue] = useState<[Dayjs, Dayjs]>([
+    extendedDayjs().subtract(1, 'month').startOf('month'),
+    extendedDayjs().startOf('month'),
+  ]);
 
   // Parse the incoming value to set initial dates
   useEffect(() => {
@@ -180,12 +186,10 @@ export function DateRangeFrame(props: FrameComponentProps) {
           ranges={ranges}
           style={{ width: '100%' }}
           // Show 2 months side by side: previous month on left, current month on right
+          // Use initialPickerValue so it doesn't reset when user selects different dates
           picker="date"
           mode={['date', 'date']}
-          defaultPickerValue={[
-            extendedDayjs().subtract(1, 'month').startOf('month'),
-            extendedDayjs().startOf('month'),
-          ]}
+          defaultPickerValue={initialPickerValue}
         />
       </div>
     </AntdThemeProvider>
