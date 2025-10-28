@@ -179,8 +179,13 @@ export function DateRangeFrame(props: FrameComponentProps) {
           format="YYYY-MM-DD"
           ranges={ranges}
           style={{ width: '100%' }}
-          // Show 2 months side by side (current and previous month)
-          renderExtraFooter={() => null}
+          // Show 2 months side by side: previous month on left, current month on right
+          picker="date"
+          mode={['date', 'date']}
+          defaultPickerValue={[
+            extendedDayjs().subtract(1, 'month').startOf('month'),
+            extendedDayjs().startOf('month'),
+          ]}
         />
       </div>
     </AntdThemeProvider>
