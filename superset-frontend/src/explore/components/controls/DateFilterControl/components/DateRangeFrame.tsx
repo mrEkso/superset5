@@ -99,6 +99,27 @@ export function DateRangeFrame(props: FrameComponentProps) {
     props.onChange(value);
   };
 
+  // Handle calendar change for single-click date selection
+  const handleCalendarChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
+    if (!dates) {
+      return;
+    }
+    
+    const [start, end] = dates;
+    
+    // When first date is selected and second is not yet selected
+    if (start && !end) {
+      // Automatically trigger onChange with start date as both start and end
+      // This allows single-click selection where second click changes the end date
+      setStartDate(start);
+      setEndDate(start);
+    } else if (start && end) {
+      // Both dates selected, update normally
+      setStartDate(start);
+      setEndDate(end);
+    }
+  };
+
   const ranges = {
     [t('Yesterday')]: [
       extendedDayjs().subtract(1, 'day').startOf('day'),
@@ -153,15 +174,13 @@ export function DateRangeFrame(props: FrameComponentProps) {
         <RangePicker
           value={[startDate, endDate]}
           onChange={handleChange}
+          onCalendarChange={handleCalendarChange}
           showTime={false}
           format="YYYY-MM-DD"
           ranges={ranges}
           style={{ width: '100%' }}
-          panelRender={(panelNode) => (
-            <div style={{ display: 'flex' }}>
-              {panelNode}
-            </div>
-          )}
+          // Show 2 months side by side (current and previous month)
+          renderExtraFooter={() => null}
         />
       </div>
     </AntdThemeProvider>
