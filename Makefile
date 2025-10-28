@@ -18,7 +18,7 @@
 # Python version installed; we need 3.10-3.11
 PYTHON=`command -v python3.11 || command -v python3.10`
 
-.PHONY: install superset venv pre-commit
+.PHONY: install superset venv pre-commit build-prod restart-prod rebuild-prod logs-prod
 
 install: superset pre-commit
 
@@ -112,3 +112,16 @@ report-celery-beat:
 
 admin-user:
 	superset fab create-admin
+
+# Production build and deployment with docker-compose-non-dev.yml
+build-prod:
+	docker compose -f docker-compose-non-dev.yml build superset
+
+restart-prod:
+	docker compose -f docker-compose-non-dev.yml down
+	docker compose -f docker-compose-non-dev.yml up -d
+
+rebuild-prod: build-prod restart-prod
+
+logs-prod:
+	docker compose -f docker-compose-non-dev.yml logs -f superset
