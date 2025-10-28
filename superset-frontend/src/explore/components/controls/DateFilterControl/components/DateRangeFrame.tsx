@@ -22,10 +22,12 @@ import { extendedDayjs } from 'src/utils/dates';
 import { RangePicker } from 'src/components/DatePicker';
 import { Dayjs } from 'dayjs';
 import { FrameComponentProps } from 'src/explore/components/controls/DateFilterControl/types';
-import { DAYJS_FORMAT } from 'src/explore/components/controls/DateFilterControl/utils';
 import { AntdThemeProvider } from 'src/components/AntdThemeProvider';
 import { useLocale } from 'src/hooks/useLocale';
 import Loading from 'src/components/Loading';
+
+// Custom format without time for date range picker
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export function DateRangeFrame(props: FrameComponentProps) {
   const locale = useLocale();
@@ -71,8 +73,8 @@ export function DateRangeFrame(props: FrameComponentProps) {
       setEndDate(defaultEnd);
       
       // Automatically set the default value
-      const startStr = defaultStart.format(DAYJS_FORMAT);
-      const endStr = defaultEnd.format(DAYJS_FORMAT);
+      const startStr = defaultStart.format(DATE_FORMAT);
+      const endStr = defaultEnd.format(DATE_FORMAT);
       const value = `${startStr} : ${endStr}`;
       props.onChange(value);
     }
@@ -89,8 +91,8 @@ export function DateRangeFrame(props: FrameComponentProps) {
     setEndDate(end);
     
     // Convert dayjs to the format expected by Superset
-    const startStr = start.format(DAYJS_FORMAT);
-    const endStr = end.format(DAYJS_FORMAT);
+    const startStr = start.format(DATE_FORMAT);
+    const endStr = end.format(DATE_FORMAT);
     
     // Use the custom format expected by Superset
     const value = `${startStr} : ${endStr}`;
@@ -98,12 +100,16 @@ export function DateRangeFrame(props: FrameComponentProps) {
   };
 
   const ranges = {
-    [t('Last 30 Days')]: [
-      extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day'),
+    [t('Yesterday')]: [
+      extendedDayjs().subtract(1, 'day').startOf('day'),
       extendedDayjs().subtract(1, 'day').endOf('day'),
     ] as [Dayjs, Dayjs],
     [t('Last 7 Days')]: [
       extendedDayjs().subtract(1, 'day').subtract(6, 'days').startOf('day'),
+      extendedDayjs().subtract(1, 'day').endOf('day'),
+    ] as [Dayjs, Dayjs],
+    [t('Last 30 Days')]: [
+      extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day'),
       extendedDayjs().subtract(1, 'day').endOf('day'),
     ] as [Dayjs, Dayjs],
     [t('Last Week')]: [
@@ -147,10 +153,15 @@ export function DateRangeFrame(props: FrameComponentProps) {
         <RangePicker
           value={[startDate, endDate]}
           onChange={handleChange}
-          showTime={{ format: 'HH:mm:ss' }}
-          format="YYYY-MM-DD HH:mm:ss"
+          showTime={false}
+          format="YYYY-MM-DD"
           ranges={ranges}
           style={{ width: '100%' }}
+          panelRender={(panelNode) => (
+            <div style={{ display: 'flex' }}>
+              {panelNode}
+            </div>
+          )}
         />
       </div>
     </AntdThemeProvider>
