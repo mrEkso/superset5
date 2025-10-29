@@ -282,13 +282,13 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
           <div>
             {evalResponse === 'No filter' 
               ? t('No filter') 
-              : formatActualTimeRange(evalResponse)}
+              : evalResponse}
           </div>
         )}
         {!validTimeRange && (
           <IconWrapper className="warning">
             <Icons.ErrorSolidSmall iconColor={theme.colors.error.base} />
-            <span className="text error">{formatActualTimeRange(evalResponse)}</span>
+            <span className="text error">{evalResponse}</span>
           </IconWrapper>
         )}
       </div>

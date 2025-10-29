@@ -91,9 +91,9 @@ export function DateRangeFrame(props: FrameComponentProps) {
     setEndDate(end);
     
     // Convert dayjs to the format expected by Superset
-    // Include time to make end date inclusive (end of day: 23:59:59)
-    const startStr = start.startOf('day').format('YYYY-MM-DD HH:mm:ss');
-    const endStr = end.endOf('day').format('YYYY-MM-DD HH:mm:ss');
+    // Include time to make end date inclusive (end of day)
+    const startStr = start.startOf('day').format('YYYY-MM-DD HH:mm:ss.SSS');
+    const endStr = end.endOf('day').format('YYYY-MM-DD HH:mm:ss.SSS');
     
     // Use the custom format expected by Superset
     const value = `${startStr} : ${endStr}`;
