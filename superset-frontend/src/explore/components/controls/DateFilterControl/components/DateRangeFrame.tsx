@@ -71,32 +71,44 @@ export function DateRangeFrame(props: FrameComponentProps) {
       const defaultEnd = extendedDayjs().endOf('day');
       setStartDate(defaultStart);
       setEndDate(defaultEnd);
-      
-      // Automatically set the default value with inclusive end date
-      const startStr = defaultStart.startOf('day').format('YYYY-MM-DD HH:mm:ss');
-      const endStr = defaultEnd.endOf('day').format('YYYY-MM-DD HH:mm:ss');
+
+      const startStr = defaultStart.format(DATE_FORMAT);
+      const endStr = defaultEnd.format(DATE_FORMAT);
       const value = `${startStr} : ${endStr}`;
       props.onChange(value);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.value]);
 
-  const handleChange = (dates: [Dayjs, Dayjs] | null) => {
+  const handleChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
     if (!dates) {
+      props.onChange('');
       return;
     }
-    
+
     const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-    
-    // Convert dayjs to the format expected by Superset
-    // Include time to make end date inclusive (end of day)
-    const startStr = start.startOf('day').format('YYYY-MM-DD HH:mm:ss.SSS');
-    const endStr = end.endOf('day').format('YYYY-MM-DD HH:mm:ss.SSS');
-    
-    // Use the custom format expected by Superset
-    const value = `${startStr} : ${endStr}`;
+
+    // Preserve previous counterpart if the user only changed one side
+    const newStart = start ?? startDate;
+    const newEnd = end ?? endDate;
+
+    // Update local state only for the sides explicitly changed
+    if (start) setStartDate(start);
+    if (end) setEndDate(end);
+
+    let value = '';
+    if (newStart && newEnd) {
+      const startStr = newStart.format(DATE_FORMAT);
+      const endStr = newEnd.format(DATE_FORMAT);
+      value = `${startStr} : ${endStr}`;
+    } else if (newStart && !newEnd) {
+      const startStr = newStart.format(DATE_FORMAT);
+      value = `${startStr} :`;
+    } else if (!newStart && newEnd) {
+      const endStr = newEnd.format(DATE_FORMAT);
+      value = `: ${endStr}`;
+    }
+
     props.onChange(value);
   };
 
@@ -110,10 +122,9 @@ export function DateRangeFrame(props: FrameComponentProps) {
     
     // When first date is selected and second is not yet selected
     if (start && !end) {
-      // Automatically trigger onChange with start date as both start and end
-      // This allows single-click selection where second click changes the end date
+      // Update only the start date and keep the current end date so the user
+      // can change only the start while preserving the previous end bound.
       setStartDate(start);
-      setEndDate(start);
     } else if (start && end) {
       // Both dates selected, update normally
       setStartDate(start);
