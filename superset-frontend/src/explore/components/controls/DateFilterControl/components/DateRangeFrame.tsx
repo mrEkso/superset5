@@ -31,12 +31,12 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 
 export function DateRangeFrame(props: FrameComponentProps) {
   const locale = useLocale();
-  // Default: Last 30 days including yesterday (e.g., Sep 22 - Oct 21, 2025 for today Oct 27)
+  // Default: Last 30 days including today (e.g., Sep 30 - Oct 29, 2025 for today Oct 29)
   const [startDate, setStartDate] = useState<Dayjs>(
-    extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day'),
+    extendedDayjs().subtract(29, 'days').startOf('day'),
   );
   const [endDate, setEndDate] = useState<Dayjs>(
-    extendedDayjs().subtract(1, 'day').endOf('day'),
+    extendedDayjs().endOf('day'),
   );
 
   // Parse the incoming value to set initial dates
@@ -58,17 +58,17 @@ export function DateRangeFrame(props: FrameComponentProps) {
           }
         }
       } catch (error) {
-        // If parsing fails, use defaults (Last 30 days)
+        // If parsing fails, use defaults (Last 30 days including today)
         console.error('Error parsing date range:', error);
-        const defaultStart = extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day');
-        const defaultEnd = extendedDayjs().subtract(1, 'day').endOf('day');
+        const defaultStart = extendedDayjs().subtract(29, 'days').startOf('day');
+        const defaultEnd = extendedDayjs().endOf('day');
         setStartDate(defaultStart);
         setEndDate(defaultEnd);
       }
     } else {
-      // If no value or "No filter", set default and notify parent
-      const defaultStart = extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day');
-      const defaultEnd = extendedDayjs().subtract(1, 'day').endOf('day');
+      // If no value or "No filter", set default and notify parent (Last 30 days including today)
+      const defaultStart = extendedDayjs().subtract(29, 'days').startOf('day');
+      const defaultEnd = extendedDayjs().endOf('day');
       setStartDate(defaultStart);
       setEndDate(defaultEnd);
       
@@ -127,12 +127,12 @@ export function DateRangeFrame(props: FrameComponentProps) {
       extendedDayjs().subtract(1, 'day').endOf('day'),
     ] as [Dayjs, Dayjs],
     [t('Last 7 Days')]: [
-      extendedDayjs().subtract(1, 'day').subtract(6, 'days').startOf('day'),
-      extendedDayjs().subtract(1, 'day').endOf('day'),
+      extendedDayjs().subtract(6, 'days').startOf('day'),
+      extendedDayjs().endOf('day'),
     ] as [Dayjs, Dayjs],
     [t('Last 30 Days')]: [
-      extendedDayjs().subtract(1, 'day').subtract(29, 'days').startOf('day'),
-      extendedDayjs().subtract(1, 'day').endOf('day'),
+      extendedDayjs().subtract(29, 'days').startOf('day'),
+      extendedDayjs().endOf('day'),
     ] as [Dayjs, Dayjs],
     [t('Last Week')]: [
       extendedDayjs().subtract(1, 'week').startOf('week'),

@@ -45,11 +45,26 @@ import {
   useDefaultTimeFilter,
 } from './utils';
 import {
-  DateLabel,
+    DateLabel,
   DateRangeFrame,
 } from './components';
 
-const ContentStyleWrapper = styled.div`
+// Format actual time range display: remove time, change < to ≤ for end date
+const formatActualTimeRange = (response: string): string => {
+  if (!response || response === 'No filter') {
+    return response;
+  }
+  
+  // Remove time from datetime strings (keep only date)
+  // Convert: "2025-09-29 ≤ col < 2025-10-20T23:59:59" 
+  // To: "2025-09-29 ≤ col ≤ 2025-10-20"
+  let formatted = response
+    .replace(/T\d{2}:\d{2}:\d{2}(\.\d+)?/g, '') // Remove time with T prefix
+    .replace(/\s\d{2}:\d{2}:\d{2}(\.\d+)?/g, '') // Remove time with space prefix
+    .replace(/<\s*(\d{4}-\d{2}-\d{2})$/g, '≤ $1'); // Change final < to ≤
+  
+  return formatted;
+};const ContentStyleWrapper = styled.div`
   ${({ theme }) => css`
     .ant-row {
       margin-top: 8px;
@@ -265,13 +280,15 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
         <div className="section-title">{t('Actual time range')}</div>
         {validTimeRange && (
           <div>
-            {evalResponse === 'No filter' ? t('No filter') : evalResponse}
+            {evalResponse === 'No filter' 
+              ? t('No filter') 
+              : formatActualTimeRange(evalResponse)}
           </div>
         )}
         {!validTimeRange && (
           <IconWrapper className="warning">
             <Icons.ErrorSolidSmall iconColor={theme.colors.error.base} />
-            <span className="text error">{evalResponse}</span>
+            <span className="text error">{formatActualTimeRange(evalResponse)}</span>
           </IconWrapper>
         )}
       </div>
