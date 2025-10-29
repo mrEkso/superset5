@@ -72,9 +72,9 @@ export function DateRangeFrame(props: FrameComponentProps) {
       setStartDate(defaultStart);
       setEndDate(defaultEnd);
       
-      // Automatically set the default value
-      const startStr = defaultStart.format(DATE_FORMAT);
-      const endStr = defaultEnd.format(DATE_FORMAT);
+      // Automatically set the default value with inclusive end date
+      const startStr = defaultStart.startOf('day').format('YYYY-MM-DD HH:mm:ss');
+      const endStr = defaultEnd.endOf('day').format('YYYY-MM-DD HH:mm:ss');
       const value = `${startStr} : ${endStr}`;
       props.onChange(value);
     }
@@ -91,8 +91,9 @@ export function DateRangeFrame(props: FrameComponentProps) {
     setEndDate(end);
     
     // Convert dayjs to the format expected by Superset
-    const startStr = start.format(DATE_FORMAT);
-    const endStr = end.format(DATE_FORMAT);
+    // Include time to make end date inclusive (end of day: 23:59:59)
+    const startStr = start.startOf('day').format('YYYY-MM-DD HH:mm:ss');
+    const endStr = end.endOf('day').format('YYYY-MM-DD HH:mm:ss');
     
     // Use the custom format expected by Superset
     const value = `${startStr} : ${endStr}`;
