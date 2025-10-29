@@ -246,7 +246,24 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
   );
 
   function onSave() {
-    onChange(timeRangeValue);
+    // If the user edited only one side (start or end), preserve the other side
+    // from the currently applied `value` so Apply keeps the unchanged bound.
+    const separator = ' : ';
+    const parseRange = (s: string | undefined) => {
+      if (!s) return [null, null];
+      const parts = s.split(separator);
+      const a = parts[0]?.trim();
+      const b = parts[1]?.trim();
+      return [a === '' ? null : a, b === '' ? null : b];
+    };
+    const [origStart, origEnd] = parseRange(value);
+    const [editStart, editEnd] = parseRange(timeRangeValue);
+
+    const finalStart = editStart ?? origStart ?? '';
+    const finalEnd = editEnd ?? origEnd ?? '';
+
+    const merged = `${finalStart}${separator}${finalEnd}`.trim();
+    onChange(merged);
     setShow(false);
     onClosePopover();
   }

@@ -125,10 +125,24 @@ export function DateRangeFrame(props: FrameComponentProps) {
       // Update only the start date and keep the current end date so the user
       // can change only the start while preserving the previous end bound.
       setStartDate(start);
+      // emit the new time range so parent can validate and enable APPLY
+      const startStr = start.format(DATE_FORMAT);
+      const endStr = endDate ? endDate.format(DATE_FORMAT) : '';
+      const value = `${startStr} : ${endStr}`;
+      props.onChange(value.trim().endsWith(':') ? `${startStr} :` : value);
     } else if (start && end) {
       // Both dates selected, update normally
       setStartDate(start);
       setEndDate(end);
+      const startStr = start.format(DATE_FORMAT);
+      const endStr = end.format(DATE_FORMAT);
+      props.onChange(`${startStr} : ${endStr}`);
+    } else if (!start && end) {
+      // Only end selected from calendar change
+      setEndDate(end);
+      const startStr = startDate ? startDate.format(DATE_FORMAT) : '';
+      const endStr = end.format(DATE_FORMAT);
+      props.onChange(`${startStr} : ${endStr}`);
     }
   };
 
