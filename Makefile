@@ -122,7 +122,7 @@ restart-prod:
 	docker compose -f docker-compose-non-dev.yml up -d
 
 restart-nginx:
-	docker exec -it "$NGINX" nginx -s reload
+	docker exec -it nginx nginx -s reload
 
 rebuild-prod: build-prod restart-prod restart-nginx
 
