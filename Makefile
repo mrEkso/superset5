@@ -121,7 +121,10 @@ restart-prod:
 	docker compose -f docker-compose-non-dev.yml down
 	docker compose -f docker-compose-non-dev.yml up -d
 
-rebuild-prod: build-prod restart-prod
+restart-nginx:
+	docker exec -it "$NGINX" nginx -s reload
+
+rebuild-prod: build-prod restart-prod restart-nginx
 
 logs-prod:
 	docker compose -f docker-compose-non-dev.yml logs -f superset
