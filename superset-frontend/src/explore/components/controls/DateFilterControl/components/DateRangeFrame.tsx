@@ -147,44 +147,26 @@ export function DateRangeFrame(props: FrameComponentProps) {
   };
 
   const ranges = {
+    // Keep only the requested presets
     [t('Yesterday')]: [
       extendedDayjs().subtract(1, 'day').startOf('day'),
       extendedDayjs().subtract(1, 'day').endOf('day'),
-    ] as [Dayjs, Dayjs],
-    [t('Last 7 Days')]: [
-      extendedDayjs().subtract(6, 'days').startOf('day'),
-      extendedDayjs().endOf('day'),
     ] as [Dayjs, Dayjs],
     [t('Last 30 Days')]: [
       extendedDayjs().subtract(29, 'days').startOf('day'),
       extendedDayjs().endOf('day'),
     ] as [Dayjs, Dayjs],
-    [t('Last Week')]: [
-      extendedDayjs().subtract(1, 'week').startOf('week'),
-      extendedDayjs().subtract(1, 'week').endOf('week'),
+    [t('This Month')]: [
+      extendedDayjs().startOf('month'),
+      extendedDayjs().endOf('month'),
     ] as [Dayjs, Dayjs],
     [t('Last Month')]: [
       extendedDayjs().subtract(1, 'month').startOf('month'),
       extendedDayjs().subtract(1, 'month').endOf('month'),
     ] as [Dayjs, Dayjs],
-    [t('Last Quarter')]: [
-      extendedDayjs().subtract(3, 'months').startOf('month'),
-      extendedDayjs().subtract(1, 'month').endOf('month'),
-    ] as [Dayjs, Dayjs],
-    [t('Last Year')]: [
-      extendedDayjs().subtract(1, 'year').startOf('year'),
-      extendedDayjs().subtract(1, 'year').endOf('year'),
-    ] as [Dayjs, Dayjs],
-    [t('This Month')]: [
-      extendedDayjs().startOf('month'),
-      extendedDayjs().endOf('month'),
-    ] as [Dayjs, Dayjs],
-    [t('This Year')]: [
-      extendedDayjs().startOf('year'),
-      extendedDayjs().endOf('year'),
-    ] as [Dayjs, Dayjs],
     [t('All Time')]: [
-      extendedDayjs().subtract(10, 'years').startOf('year'),
+      // Use a wide range for 'All Time'
+      extendedDayjs().subtract(100, 'years').startOf('year'),
       extendedDayjs().endOf('day'),
     ] as [Dayjs, Dayjs],
   };
