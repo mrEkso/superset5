@@ -261,7 +261,7 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
                   <InfoTooltip
                     tooltip={slice.description}
                     placement="top"
-                    iconStyle={{ fontSize: '18px' }}
+                    iconStyle={{ fontSize: '24px' }}
                   />
                 </DescriptionIcon>
               )}
