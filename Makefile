@@ -124,7 +124,7 @@ restart-prod:
 restart-nginx:
 	docker exec -it nginx nginx -s reload
 
-rebuild-prod: build-prod restart-prod restart-nginx
+rebuild-prod: clean-docker build-prod restart-prod restart-nginx
 
 logs-prod:
 	docker compose -f docker-compose-non-dev.yml logs -f superset
@@ -139,8 +139,6 @@ clean-docker:
 	@echo "Cleaning dangling images (untagged/unused intermediate images)..."
 	docker image prune -f
 	@echo "Cleaning stopped containers..."
-	docker container prune -f
-	@echo "Docker cleanup complete! Volumes and active images preserved."
 
 # Full cleanup including ALL images and volumes (WARNING: destructive!)
 clean-docker-all:
