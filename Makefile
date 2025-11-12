@@ -18,7 +18,7 @@
 # Python version installed; we need 3.10-3.11
 PYTHON=`command -v python3.11 || command -v python3.10`
 
-.PHONY: install superset venv pre-commit build-prod restart-prod rebuild-prod logs-prod
+.PHONY: install superset venv pre-commit build-prod restart-prod rebuild-prod logs-prod clean-docker
 
 install: superset pre-commit
 
@@ -131,3 +131,18 @@ logs-prod:
 
 exit:
 	docker compose -f docker-compose-non-dev.yml down
+
+# Clean Docker build cache and dangling images (keeps volumes and named images)
+clean-docker:
+	@echo "Cleaning Docker build cache..."
+	docker builder prune -f
+	@echo "Cleaning dangling images (untagged/unused intermediate images)..."
+	docker image prune -f
+	@echo "Cleaning stopped containers..."
+	docker container prune -f
+	@echo "Docker cleanup complete! Volumes and active images preserved."
+
+# Full cleanup including ALL images and volumes (WARNING: destructive!)
+clean-docker-all:
+	@echo "WARNING: This will delete ALL Docker resources including volumes and images!"
+	@read -p "Are you sure? Type 'yes' to continue: " confirm && [ "$$confirm" = "yes" ] && docker system prune -a --volumes -f || echo "Cancelled"
