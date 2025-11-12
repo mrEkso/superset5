@@ -33,6 +33,7 @@ import SliceHeaderControls from 'src/dashboard/components/SliceHeaderControls';
 import { SliceHeaderControlsProps } from 'src/dashboard/components/SliceHeaderControls/types';
 import FiltersBadge from 'src/dashboard/components/FiltersBadge';
 import Icons from 'src/components/Icons';
+import InfoTooltip from 'src/components/InfoTooltip';
 import { RootState } from 'src/dashboard/types';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
@@ -59,6 +60,15 @@ const CrossFilterIcon = styled(Icons.ApartmentOutlined)`
     cursor: default;
     color: ${theme.colors.primary.base};
     line-height: 1.8;
+  `}
+`;
+
+const DescriptionIcon = styled.span`
+  ${({ theme }) => `
+    margin-left: ${theme.gridUnit}px;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
   `}
 `;
 
@@ -216,6 +226,15 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
               url={canExplore ? exploreUrl : undefined}
             />
           </Tooltip>
+          {slice.description && !editMode && (
+            <DescriptionIcon>
+              <InfoTooltip
+                tooltip={slice.description}
+                placement="top"
+                iconStyle={{ fontSize: '14px' }}
+              />
+            </DescriptionIcon>
+          )}
           {!!Object.values(annotationQuery).length && (
             <Tooltip
               id="annotations-loading-tooltip"
