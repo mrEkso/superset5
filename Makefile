@@ -128,3 +128,6 @@ rebuild-prod: build-prod restart-prod restart-nginx
 
 logs-prod:
 	docker compose -f docker-compose-non-dev.yml logs -f superset
+
+exit:
+	docker compose -f docker-compose-non-dev.yml down
