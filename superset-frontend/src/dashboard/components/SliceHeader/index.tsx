@@ -226,15 +226,6 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
               url={canExplore ? exploreUrl : undefined}
             />
           </Tooltip>
-          {slice.description && !editMode && (
-            <DescriptionIcon>
-              <InfoTooltip
-                tooltip={slice.description}
-                placement="top"
-                iconStyle={{ fontSize: '14px' }}
-              />
-            </DescriptionIcon>
-          )}
           {!!Object.values(annotationQuery).length && (
             <Tooltip
               id="annotations-loading-tooltip"
@@ -265,6 +256,15 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
         <div className="header-controls">
           {!editMode && (
             <>
+              {slice.description && (
+                <DescriptionIcon>
+                  <InfoTooltip
+                    tooltip={slice.description}
+                    placement="top"
+                    iconStyle={{ fontSize: '18px' }}
+                  />
+                </DescriptionIcon>
+              )}
               {SliceHeaderExtension && (
                 <SliceHeaderExtension
                   sliceId={slice.slice_id}
