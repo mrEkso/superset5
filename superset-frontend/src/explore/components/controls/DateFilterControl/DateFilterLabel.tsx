@@ -45,7 +45,7 @@ import {
   useDefaultTimeFilter,
 } from './utils';
 import {
-    DateLabel,
+  DateLabel,
   DateRangeFrame,
 } from './components';
 
@@ -54,7 +54,7 @@ const formatActualTimeRange = (response: string): string => {
   if (!response || response === 'No filter') {
     return response;
   }
-  
+
   // Remove time from datetime strings (keep only date)
   // Convert: "2025-09-29 ≤ col < 2025-10-20T23:59:59" 
   // To: "2025-09-29 ≤ col ≤ 2025-10-20"
@@ -62,9 +62,9 @@ const formatActualTimeRange = (response: string): string => {
     .replace(/T\d{2}:\d{2}:\d{2}(\.\d+)?/g, '') // Remove time with T prefix
     .replace(/\s\d{2}:\d{2}:\d{2}(\.\d+)?/g, '') // Remove time with space prefix
     .replace(/<\s*(\d{4}-\d{2}-\d{2})$/g, '≤ $1'); // Change final < to ≤
-  
+
   return formatted;
-};const ContentStyleWrapper = styled.div`
+}; const ContentStyleWrapper = styled.div`
   ${({ theme }) => css`
     .ant-row {
       margin-top: 8px;
@@ -245,7 +245,7 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
     [timeRangeValue],
   );
 
-  function onSave() {
+  function onSave(val?: string) {
     // If the user edited only one side (start or end), preserve the other side
     // from the currently applied `value` so Apply keeps the unchanged bound.
     const separator = ' : ';
@@ -257,7 +257,8 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
       return [a === '' ? null : a, b === '' ? null : b];
     };
     const [origStart, origEnd] = parseRange(value);
-    const [editStart, editEnd] = parseRange(timeRangeValue);
+    // Use provided value or fall back to state
+    const [editStart, editEnd] = parseRange(typeof val === 'string' ? val : timeRangeValue);
 
     const finalStart = editStart ?? origStart ?? '';
     const finalEnd = editEnd ?? origEnd ?? '';
@@ -291,14 +292,14 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
   const overlayContent = (
     <ContentStyleWrapper>
       {/* Always show DateRangeFrame calendar directly */}
-      <DateRangeFrame value={timeRangeValue} onChange={setTimeRangeValue} />
+      <DateRangeFrame value={timeRangeValue} onChange={setTimeRangeValue} onSave={onSave} />
       <Divider />
       <div>
         <div className="section-title">{t('Actual time range')}</div>
         {validTimeRange && (
           <div>
-            {evalResponse === 'No filter' 
-              ? t('No filter') 
+            {evalResponse === 'No filter'
+              ? t('No filter')
               : evalResponse}
           </div>
         )}
@@ -317,6 +318,7 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
           key="cancel"
           onClick={onHide}
           data-test={DateFilterTestKey.CancelButton}
+          placement="top"
         >
           {t('CANCEL')}
         </Button>
@@ -327,6 +329,7 @@ export default function DateFilterLabel(props: DateFilterControlProps) {
           key="apply"
           onClick={onSave}
           data-test={DateFilterTestKey.ApplyButton}
+          placement="top"
         >
           {t('APPLY')}
         </Button>

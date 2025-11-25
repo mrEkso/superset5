@@ -105,6 +105,7 @@ export type FrameComponentProps = {
   onChange: (timeRange: string) => void;
   value: string;
   isOverflowingFilterBar?: boolean;
+  onSave?: (value?: string) => void;
 };
 
 export interface DateFilterControlProps {
