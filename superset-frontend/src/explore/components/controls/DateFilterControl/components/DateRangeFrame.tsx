@@ -20,6 +20,7 @@ import { useState, useEffect } from 'react';
 import { css, t } from '@superset-ui/core';
 import { extendedDayjs } from 'src/utils/dates';
 import { RangePicker } from 'src/components/DatePicker';
+import { Input } from 'src/components/Input';
 import { Dayjs } from 'dayjs';
 import { FrameComponentProps } from 'src/explore/components/controls/DateFilterControl/types';
 import { AntdThemeProvider } from 'src/components/AntdThemeProvider';
@@ -30,6 +31,7 @@ import Loading from 'src/components/Loading';
 import { Global } from '@emotion/react';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
+const INPUT_DATE_FORMAT = 'DD.MM.YYYY';
 
 // Dynamic preset label for special handling
 const DYNAMIC_PRESET_LABEL = 'Last 30 days (Dynamic)';
@@ -43,6 +45,75 @@ export function DateRangeFrame(props: FrameComponentProps) {
   const [endDate, setEndDate] = useState<Dayjs | null>(
     extendedDayjs().subtract(1, 'day').endOf('day'),
   );
+
+  const [startInput, setStartInput] = useState<string>('');
+  const [endInput, setEndInput] = useState<string>('');
+  const [inputError, setInputError] = useState<boolean>(false);
+
+  // Sync inputs with state
+  useEffect(() => {
+    setStartInput(startDate ? startDate.format(INPUT_DATE_FORMAT) : '');
+  }, [startDate]);
+
+  useEffect(() => {
+    setEndInput(endDate ? endDate.format(INPUT_DATE_FORMAT) : '');
+  }, [endDate]);
+
+  useEffect(() => {
+    if (startInput.length === 10 && endInput.length === 10) {
+      if (extendedDayjs(startInput, INPUT_DATE_FORMAT).isAfter(extendedDayjs(endInput, INPUT_DATE_FORMAT))) {
+        setInputError(true);
+      } else {
+        setInputError(false);
+      }
+    } else {
+      setInputError(false);
+    }
+  }, [startInput, endInput]);
+
+  const handleInputMask = (value: string) => {
+    let val = value.replace(/\D/g, '');
+    if (val.length > 2) val = val.slice(0, 2) + '.' + val.slice(2);
+    if (val.length > 5) val = val.slice(0, 5) + '.' + val.slice(5, 9);
+    return val;
+  };
+
+  const applyManualInput = (start: Dayjs | null, end: Dayjs | null) => {
+    setStartDate(start);
+    setEndDate(end);
+    
+    // Basic check for correct range
+    if (start && end && start.isAfter(end)) {
+       return;
+    }
+
+    if (start && end) {
+       props.onChange(`${start.format(DATE_FORMAT)} : ${end.format(DATE_FORMAT)}`);
+    } else if (start) {
+       props.onChange(`${start.format(DATE_FORMAT)} :`);
+    } else if (end) {
+       props.onChange(`: ${end.format(DATE_FORMAT)}`);
+    }
+  };
+
+  const handleStartInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = handleInputMask(e.target.value);
+    setStartInput(masked);
+    const parsed = extendedDayjs(masked, INPUT_DATE_FORMAT);
+    if (masked.length === 10 && parsed.isValid()) {
+      applyManualInput(parsed, endDate);
+    }
+  };
+
+  const handleEndInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = handleInputMask(e.target.value);
+    setEndInput(masked);
+    const parsed = extendedDayjs(masked, INPUT_DATE_FORMAT);
+    if (masked.length === 10 && parsed.isValid()) {
+      applyManualInput(startDate, parsed);
+    }
+  };
+
 
 
 
@@ -416,6 +487,24 @@ export function DateRangeFrame(props: FrameComponentProps) {
         value={[startDate, endDate]}
         onChange={handleChange}
         onCalendarChange={handleCalendarChange}
+        renderExtraFooter={() => (
+           <div style={{ padding: '10px 16px', borderTop: '1px solid #ebedf0', display: 'flex', gap: '8px', alignItems: 'center' }}>
+             <Input 
+               placeholder="DD.MM.YYYY" 
+               value={startInput} 
+               onChange={handleStartInputChange}
+               style={{ width: '120px', borderColor: inputError ? '#ff4d4f' : undefined }}
+             />
+             <span> - </span>
+             <Input 
+               placeholder="DD.MM.YYYY" 
+               value={endInput} 
+               onChange={handleEndInputChange}
+               style={{ width: '120px', borderColor: inputError ? '#ff4d4f' : undefined }}
+             />
+             {inputError && <span style={{ color: '#ff4d4f', fontSize: '12px' }}>{t('Start > End')}</span>}
+           </div>
+        )}
         showTime={false}
         format="YYYY-MM-DD"
         presets={presets}
